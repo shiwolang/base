@@ -11,7 +11,8 @@ class Object
 {
     public static $__mro__ = null;
 
-    public $supers = [];
+    public    $supers  = [];
+    protected $_supers = [];
 
     /**
      * @return static
@@ -27,9 +28,8 @@ class Object
                 $self->super($className, $object);
             }
         }
-        foreach ($self->supers as $super) {
-            $super->supers = $self->supers;
-        }
+		
+		$super->_supers = $self->supers;
 
         return $self;
     }
@@ -40,17 +40,17 @@ class Object
             $extends = static::__mro__();
 
             if (in_array($className, $extends)) {
-                $this->supers[$className] = $object;
+                return $this->supers[$className] = $object;
             } else {
                 throw new \Exception(static::className() . " does not extend from " . $className);
             }
+        } else {
+            return $this->_supers[$className];
         }
-
-        return $this->supers[$className];
     }
-    
 
-    public static function extend()
+
+    protected static function extend()
     {
         $parentClass = func_get_args();
 
